@@ -634,6 +634,26 @@
             .month-selector { grid-template-columns: repeat(3, 1fr); }
             .dashboard-grid { grid-template-columns: 1fr; }
             .sync-status span:not(.sync-dot) { display: none; }
+            .raffle-link span { display: none; }
+        }
+
+        .raffle-link {
+            background: white;
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .raffle-link:hover {
+            background: var(--green);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,88,82,0.3);
         }
     </style>
 </head>
@@ -649,6 +669,7 @@
                 <img src="farillio_logo.jpg" alt="Farillio Logo">
             </div>
             <h1>Office Desk Bookings 2026</h1>
+            <a href="incentives.html" class="raffle-link">🎯 Incentives</a>
             <div id="syncStatus" class="sync-status connected">
                 <div class="sync-dot connected"></div>
                 <span>Live Sync Active</span>
