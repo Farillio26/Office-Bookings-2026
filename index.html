@@ -303,6 +303,22 @@
             line-height: 1;
         }
 
+        .edit-user {
+            cursor: pointer;
+            font-size: 0.9rem;
+            line-height: 1;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .edit-user:hover {
+            opacity: 1;
+        }
+
+        .remove-user:hover {
+            color: #931602;
+        }
+
         .calendar {
             background: var(--surface);
             border-radius: 16px;
@@ -690,6 +706,10 @@
                         <span><strong>Booked</strong></span>
                     </div>
                     <div class="legend-item">
+                        <div class="legend-box" style="background: #98D4CF;"></div>
+                        <span><strong>Floating Desk</strong></span>
+                    </div>
+                    <div class="legend-item">
                         <div class="legend-box weekend"></div>
                         <span><strong>Weekend / Bank Holiday</strong></span>
                     </div>
@@ -702,58 +722,51 @@
             <div class="controls" style="margin-bottom: 20px;">
                 <div class="control-group">
                     <h3>📅 Select Date Range</h3>
-                    <label for="attendanceMonth">Month</label>
-                    <select id="attendanceMonth" onchange="updateAttendanceDashboards()">
-                        <option value="0">January</option>
-                        <option value="1">February</option>
-                        <option value="2">March</option>
-                        <option value="3">April</option>
-                        <option value="4">May</option>
-                        <option value="5">June</option>
-                        <option value="6">July</option>
-                        <option value="7">August</option>
-                        <option value="8">September</option>
-                        <option value="9">October</option>
-                        <option value="10">November</option>
-                        <option value="11">December</option>
-                    </select>
-                    <label for="attendanceWeek" style="margin-top: 15px;">Week of Month</label>
-                    <select id="attendanceWeek" onchange="updateAttendanceDashboards()">
-                        <option value="1">Week 1 (Days 1-7)</option>
-                        <option value="2">Week 2 (Days 8-14)</option>
-                        <option value="3">Week 3 (Days 15-21)</option>
-                        <option value="4">Week 4 (Days 22-28)</option>
-                        <option value="5">Week 5 (Days 29+)</option>
-                    </select>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="attendanceStartDate">From Date</label>
+                            <input type="date" id="attendanceStartDate" onchange="updateAttendanceDashboards()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
+                        </div>
+                        <div>
+                            <label for="attendanceEndDate">To Date</label>
+                            <input type="date" id="attendanceEndDate" onchange="updateAttendanceDashboards()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="dashboard-grid">
                 <div class="dashboard-card">
-                    <h3>📅 Weekly Attendance</h3>
+                    <h3>📊 Attendance for Selected Period</h3>
                     <div id="weeklyAttendance" class="attendance-list"></div>
                 </div>
                 <div class="dashboard-card">
-                    <h3>📆 Monthly Attendance</h3>
-                    <div id="monthlyAttendance" class="attendance-list"></div>
+                    <h3>📈 Summary</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                        <div class="stat">
+                            <div class="stat-value" id="periodBookings">0</div>
+                            <div class="stat-label">Period Bookings</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="periodDays">0</div>
+                            <div class="stat-label">Working Days</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="stat">
+                            <div class="stat-value" id="totalBookings">0</div>
+                            <div class="stat-label">Year Total</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value" id="utilizationRate">0%</div>
+                            <div class="stat-label">Year Utilization</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="controls">
                 <div class="control-group">
-                    <h3>📊 Quick Stats</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                        <div class="stat">
-                            <div class="stat-value" id="totalBookings">0</div>
-                            <div class="stat-label">Total Bookings</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value" id="utilizationRate">0%</div>
-                            <div class="stat-label">Utilization</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="control-group">
                     <h3>💾 Export Attendance</h3>
-                    <button onclick="exportAttendanceCSV()" class="export-btn" style="width: 100%;">📊 Export Attendance Report</button>
+                    <button onclick="exportAttendanceCSV()" class="export-btn" style="width: 100%;">📊 Export Full Year Report</button>
                 </div>
             </div>
         </div>
@@ -763,38 +776,25 @@
             <div class="controls" style="margin-bottom: 20px;">
                 <div class="control-group">
                     <h3>📅 Select Date Range</h3>
-                    <label for="deptMonth">Month</label>
-                    <select id="deptMonth" onchange="updateAttendanceDashboards()">
-                        <option value="0">January</option>
-                        <option value="1">February</option>
-                        <option value="2">March</option>
-                        <option value="3">April</option>
-                        <option value="4">May</option>
-                        <option value="5">June</option>
-                        <option value="6">July</option>
-                        <option value="7">August</option>
-                        <option value="8">September</option>
-                        <option value="9">October</option>
-                        <option value="10">November</option>
-                        <option value="11">December</option>
-                    </select>
-                    <label for="deptWeek" style="margin-top: 15px;">Week of Month</label>
-                    <select id="deptWeek" onchange="updateAttendanceDashboards()">
-                        <option value="1">Week 1 (Days 1-7)</option>
-                        <option value="2">Week 2 (Days 8-14)</option>
-                        <option value="3">Week 3 (Days 15-21)</option>
-                        <option value="4">Week 4 (Days 22-28)</option>
-                        <option value="5">Week 5 (Days 29+)</option>
-                    </select>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="deptStartDate">From Date</label>
+                            <input type="date" id="deptStartDate" onchange="updateAttendanceDashboards()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
+                        </div>
+                        <div>
+                            <label for="deptEndDate">To Date</label>
+                            <input type="date" id="deptEndDate" onchange="updateAttendanceDashboards()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="dashboard-grid">
                 <div class="dashboard-card">
-                    <h3>🏢 Weekly Department Attendance</h3>
+                    <h3>🏢 Department Attendance for Selected Period</h3>
                     <div id="weeklyDeptAttendance" class="attendance-list"></div>
                 </div>
                 <div class="dashboard-card">
-                    <h3>🏢 Monthly Department Attendance</h3>
+                    <h3>📈 Department Summary</h3>
                     <div id="monthlyDeptAttendance" class="attendance-list"></div>
                 </div>
             </div>
@@ -826,8 +826,11 @@
                             <div class="stat-label">Total Users</div>
                         </div>
                         <div class="stat">
-                            <div class="stat-value">8</div>
+                            <div class="stat-value">11</div>
                             <div class="stat-label">Total Desks</div>
+                        </div>
+                        <div class="stat" style="grid-column: span 2; margin-top: 10px;">
+                            <div style="font-size: 0.8rem; color: var(--text-light);">8 Fixed + 3 Floating</div>
                         </div>
                     </div>
                 </div>
@@ -1025,6 +1028,50 @@
             }
         }
 
+        window.editUser = async function(oldName, department) {
+            const newName = prompt(`Edit name for "${oldName}":`, oldName);
+            
+            if (!newName || newName.trim() === '' || newName.trim() === oldName) {
+                return; // Cancelled or no change
+            }
+            
+            const trimmedName = newName.trim();
+            
+            // Check if new name already exists
+            for (let dept in users) {
+                if (users[dept].includes(trimmedName)) {
+                    alert('A colleague with this name already exists!');
+                    return;
+                }
+            }
+            
+            // Update user in the users list
+            const index = users[department].indexOf(oldName);
+            if (index > -1) {
+                users[department][index] = trimmedName;
+                users[department].sort();
+            }
+            
+            // Update all bookings with old name to new name
+            const updatedBookings = {};
+            for (let key in bookings) {
+                if (bookings[key] === oldName) {
+                    updatedBookings[key] = trimmedName;
+                } else {
+                    updatedBookings[key] = bookings[key];
+                }
+            }
+            bookings = updatedBookings;
+            
+            await saveToFirebase();
+            renderUserList();
+            renderCalendar();
+            updateStats();
+            updateAttendanceDashboards();
+            
+            alert(`"${oldName}" has been renamed to "${trimmedName}" and all their bookings have been updated!`);
+        }
+
         function renderUserList() {
             const list = document.getElementById('userList');
             let allUsers = [];
@@ -1040,7 +1087,8 @@
             list.innerHTML = allUsers.map(user => `
                 <div class="user-tag">
                     <span class="name">${user.name}</span>
-                    <span class="remove-user" onclick="removeUser('${user.name}', '${user.dept}')">×</span>
+                    <span class="edit-user" onclick="editUser('${user.name}', '${user.dept}')" title="Edit name">✏️</span>
+                    <span class="remove-user" onclick="removeUser('${user.name}', '${user.dept}')" title="Remove user">×</span>
                 </div>
             `).join('');
             
@@ -1075,6 +1123,10 @@
             for (let i = 1; i <= 8; i++) {
                 html += `<th>Desk ${i}</th>`;
             }
+            // Add floating desks
+            html += '<th style="background: var(--green);">Floating 1</th>';
+            html += '<th style="background: var(--green);">Floating 2</th>';
+            html += '<th style="background: var(--green);">Floating 3</th>';
             html += '<th>In Use</th><th>Free</th>';
             html += '</tr></thead><tbody>';
 
@@ -1091,6 +1143,8 @@
                 html += `<td class="weekday-cell">${dayName}</td>`;
 
                 let inUse = 0;
+                
+                // Regular desks (1-8)
                 for (let desk = 1; desk <= 8; desk++) {
                     const key = `${dateStr}_desk${desk}`;
                     const booking = bookings[key] || '';
@@ -1138,8 +1192,58 @@
                         html += `</td>`;
                     }
                 }
+                
+                // Floating desks (9-11)
+                for (let floating = 1; floating <= 3; floating++) {
+                    const key = `${dateStr}_floating${floating}`;
+                    const booking = bookings[key] || '';
+                    
+                    if (isNonWorking) {
+                        html += `<td class="desk-cell" style="background: var(--brown-dark); color: white; font-weight: 700; text-align: center;">${isBankHol ? '🏖️' : '—'}</td>`;
+                    } else {
+                        if (booking) inUse++;
+                        
+                        html += `<td class="desk-cell" style="background: #E8F5F4;">`;
+                        
+                        if (booking) {
+                            html += `<select onchange="updateBooking('${key}', this.value)" class="booked-select" style="background: var(--green-light);">
+                                <option value="${booking}" selected>${booking}</option>
+                                <option value="">Free</option>`;
+                            
+                            let allUsersList = [];
+                            for (let dept in users) {
+                                allUsersList = allUsersList.concat(users[dept]);
+                            }
+                            allUsersList.sort();
+                            
+                            allUsersList.forEach(u => {
+                                if (u !== booking) {
+                                    html += `<option value="${u}">${u}</option>`;
+                                }
+                            });
+                            html += `</select>`;
+                        } else {
+                            html += `<select onchange="updateBooking('${key}', this.value)" class="free-select" style="background: #98D4CF;">
+                                <option value="">Free</option>`;
+                            
+                            let allUsersList = [];
+                            for (let dept in users) {
+                                allUsersList = allUsersList.concat(users[dept]);
+                            }
+                            allUsersList.sort();
+                            
+                            allUsersList.forEach(u => {
+                                html += `<option value="${u}">${u}</option>`;
+                            });
+                            html += `</select>`;
+                        }
+                        
+                        html += `</td>`;
+                    }
+                }
 
-                const free = isNonWorking ? '—' : (8 - inUse);
+                const totalDesks = 11; // 8 regular + 3 floating
+                const free = isNonWorking ? '—' : (totalDesks - inUse);
                 html += `<td class="summary-cell">${isNonWorking ? '—' : inUse}</td>`;
                 html += `<td class="summary-cell">${free}</td>`;
                 html += '</tr>';
@@ -1192,7 +1296,7 @@
                 }
             }
             
-            const totalSlots = totalWorkdays * 8;
+            const totalSlots = totalWorkdays * 11; // 8 regular + 3 floating
             const utilization = totalSlots > 0 ? Math.round((Object.keys(bookings).length / totalSlots) * 100) : 0;
             document.getElementById('utilizationRate').textContent = utilization + '%';
         }
@@ -1211,10 +1315,16 @@
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 
                 if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
-                    monthTotalSlots += 8;
+                    monthTotalSlots += 11; // 8 regular + 3 floating
                     
+                    // Count regular desks
                     for (let desk = 1; desk <= 8; desk++) {
                         const key = `${dateStr}_desk${desk}`;
+                        if (bookings[key]) monthBookingCount++;
+                    }
+                    // Count floating desks
+                    for (let floating = 1; floating <= 3; floating++) {
+                        const key = `${dateStr}_floating${floating}`;
                         if (bookings[key]) monthBookingCount++;
                     }
                 }
@@ -1227,59 +1337,86 @@
         // Attendance tracking
         window.updateAttendanceDashboards = function() {
             updateWeeklyAttendance();
-            updateMonthlyAttendance();
             updateWeeklyDeptAttendance();
             updateMonthlyDeptAttendance();
+            updatePeriodStats();
         }
 
-        function getWeekDates() {
-            const monthSelect = document.getElementById('attendanceMonth');
-            const weekSelect = document.getElementById('attendanceWeek');
+        function getAttendanceDates() {
+            const startDateInput = document.getElementById('attendanceStartDate');
+            const endDateInput = document.getElementById('attendanceEndDate');
             
-            const selectedMonth = monthSelect ? parseInt(monthSelect.value) : currentMonth;
-            const selectedWeek = weekSelect ? parseInt(weekSelect.value) : 1;
+            if (!startDateInput || !endDateInput) return [];
             
-            const startDay = (selectedWeek - 1) * 7 + 1;
-            const endDay = Math.min(startDay + 6, new Date(2026, selectedMonth + 1, 0).getDate());
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
             
             const dates = [];
+            let currentDate = new Date(startDate);
             
-            for (let day = startDay; day <= endDay; day++) {
-                const date = new Date(2026, selectedMonth, day);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            while (currentDate <= endDate) {
+                const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                
                 if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
-                    dates.push(date);
+                    dates.push(new Date(currentDate));
                 }
+                currentDate.setDate(currentDate.getDate() + 1);
             }
             return dates;
         }
 
-        function getDeptWeekDates() {
-            const monthSelect = document.getElementById('deptMonth');
-            const weekSelect = document.getElementById('deptWeek');
+        function getDeptDates() {
+            const startDateInput = document.getElementById('deptStartDate');
+            const endDateInput = document.getElementById('deptEndDate');
             
-            const selectedMonth = monthSelect ? parseInt(monthSelect.value) : currentMonth;
-            const selectedWeek = weekSelect ? parseInt(weekSelect.value) : 1;
+            if (!startDateInput || !endDateInput) return [];
             
-            const startDay = (selectedWeek - 1) * 7 + 1;
-            const endDay = Math.min(startDay + 6, new Date(2026, selectedMonth + 1, 0).getDate());
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
             
             const dates = [];
+            let currentDate = new Date(startDate);
             
-            for (let day = startDay; day <= endDay; day++) {
-                const date = new Date(2026, selectedMonth, day);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+            while (currentDate <= endDate) {
+                const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+                
                 if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
-                    dates.push(date);
+                    dates.push(new Date(currentDate));
                 }
+                currentDate.setDate(currentDate.getDate() + 1);
             }
             return dates;
+        }
+
+        function updatePeriodStats() {
+            const dates = getAttendanceDates();
+            let periodBookings = 0;
+            
+            dates.forEach(date => {
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                // Regular desks
+                for (let desk = 1; desk <= 8; desk++) {
+                    const key = `${dateStr}_desk${desk}`;
+                    if (bookings[key]) periodBookings++;
+                }
+                // Floating desks
+                for (let floating = 1; floating <= 3; floating++) {
+                    const key = `${dateStr}_floating${floating}`;
+                    if (bookings[key]) periodBookings++;
+                }
+            });
+            
+            const periodBookingsEl = document.getElementById('periodBookings');
+            const periodDaysEl = document.getElementById('periodDays');
+            
+            if (periodBookingsEl) periodBookingsEl.textContent = periodBookings;
+            if (periodDaysEl) periodDaysEl.textContent = dates.length;
         }
 
         function updateWeeklyAttendance() {
-            const weekDates = getWeekDates();
+            const dates = getAttendanceDates();
             const attendance = {};
             
             for (let dept in users) {
@@ -1288,11 +1425,19 @@
                 });
             }
             
-            weekDates.forEach(date => {
+            dates.forEach(date => {
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                // Regular desks
                 for (let desk = 1; desk <= 8; desk++) {
                     const key = `${dateStr}_desk${desk}`;
-                    if (bookings[key]) {
+                    if (bookings[key] && attendance.hasOwnProperty(bookings[key])) {
+                        attendance[bookings[key]]++;
+                    }
+                }
+                // Floating desks
+                for (let floating = 1; floating <= 3; floating++) {
+                    const key = `${dateStr}_floating${floating}`;
+                    if (bookings[key] && attendance.hasOwnProperty(bookings[key])) {
                         attendance[bookings[key]]++;
                     }
                 }
@@ -1317,71 +1462,30 @@
                 `;
             });
             
-            document.getElementById('weeklyAttendance').innerHTML = html || '<p style="color: var(--text-light);">No attendance data yet</p>';
-        }
-
-        function updateMonthlyAttendance() {
-            const monthSelect = document.getElementById('attendanceMonth');
-            const selectedMonth = monthSelect ? parseInt(monthSelect.value) : currentMonth;
-            
-            const year = 2026;
-            const daysInMonth = new Date(year, selectedMonth + 1, 0).getDate();
-            const attendance = {};
-            
-            for (let dept in users) {
-                users[dept].forEach(user => {
-                    attendance[user] = 0;
-                });
-            }
-            
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, selectedMonth, day);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateStr = `${year}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
-                    for (let desk = 1; desk <= 8; desk++) {
-                        const key = `${dateStr}_desk${desk}`;
-                        if (bookings[key]) {
-                            attendance[bookings[key]]++;
-                        }
-                    }
-                }
-            }
-            
-            const sorted = Object.entries(attendance).sort((a, b) => {
-                if (b[1] !== a[1]) return b[1] - a[1];
-                return a[0].localeCompare(b[0]);
-            });
-            
-            let html = '';
-            sorted.forEach(([user, count]) => {
-                const dept = getUserDepartment(user);
-                html += `
-                    <div class="attendance-item">
-                        <div>
-                            <div class="attendance-name">${user}</div>
-                            <div class="attendance-dept">${dept}</div>
-                        </div>
-                        <div class="attendance-count">${count}</div>
-                    </div>
-                `;
-            });
-            
-            document.getElementById('monthlyAttendance').innerHTML = html || '<p style="color: var(--text-light);">No attendance data yet</p>';
+            document.getElementById('weeklyAttendance').innerHTML = html || '<p style="color: var(--text-light);">No attendance data for selected period</p>';
         }
 
         function updateWeeklyDeptAttendance() {
-            const weekDates = getDeptWeekDates();
+            const dates = getDeptDates();
             const deptAttendance = {};
             
             for (let dept in users) {
                 deptAttendance[dept] = 0;
             }
             
-            weekDates.forEach(date => {
+            dates.forEach(date => {
                 const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                // Regular desks
                 for (let desk = 1; desk <= 8; desk++) {
                     const key = `${dateStr}_desk${desk}`;
+                    if (bookings[key]) {
+                        const dept = getUserDepartment(bookings[key]);
+                        if (dept) deptAttendance[dept]++;
+                    }
+                }
+                // Floating desks
+                for (let floating = 1; floating <= 3; floating++) {
+                    const key = `${dateStr}_floating${floating}`;
                     if (bookings[key]) {
                         const dept = getUserDepartment(bookings[key]);
                         if (dept) deptAttendance[dept]++;
@@ -1404,47 +1508,55 @@
                 `;
             });
             
-            document.getElementById('weeklyDeptAttendance').innerHTML = html;
+            document.getElementById('weeklyDeptAttendance').innerHTML = html || '<p style="color: var(--text-light);">No data for selected period</p>';
         }
 
         function updateMonthlyDeptAttendance() {
-            const monthSelect = document.getElementById('deptMonth');
-            const selectedMonth = monthSelect ? parseInt(monthSelect.value) : currentMonth;
-            
-            const year = 2026;
-            const daysInMonth = new Date(year, selectedMonth + 1, 0).getDate();
+            const dates = getDeptDates();
             const deptAttendance = {};
             
+            // Calculate attendance per person per department
             for (let dept in users) {
-                deptAttendance[dept] = 0;
+                deptAttendance[dept] = { total: 0, perPerson: 0 };
             }
             
-            for (let day = 1; day <= daysInMonth; day++) {
-                const date = new Date(year, selectedMonth, day);
-                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-                const dateStr = `${year}-${String(selectedMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
-                    for (let desk = 1; desk <= 8; desk++) {
-                        const key = `${dateStr}_desk${desk}`;
-                        if (bookings[key]) {
-                            const dept = getUserDepartment(bookings[key]);
-                            if (dept) deptAttendance[dept]++;
-                        }
+            dates.forEach(date => {
+                const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                // Regular desks
+                for (let desk = 1; desk <= 8; desk++) {
+                    const key = `${dateStr}_desk${desk}`;
+                    if (bookings[key]) {
+                        const dept = getUserDepartment(bookings[key]);
+                        if (dept) deptAttendance[dept].total++;
                     }
                 }
+                // Floating desks
+                for (let floating = 1; floating <= 3; floating++) {
+                    const key = `${dateStr}_floating${floating}`;
+                    if (bookings[key]) {
+                        const dept = getUserDepartment(bookings[key]);
+                        if (dept) deptAttendance[dept].total++;
+                    }
+                }
+            });
+            
+            // Calculate average per person
+            for (let dept in deptAttendance) {
+                const numPeople = users[dept].length;
+                deptAttendance[dept].perPerson = numPeople > 0 ? (deptAttendance[dept].total / numPeople).toFixed(1) : 0;
             }
             
-            const sorted = Object.entries(deptAttendance).sort((a, b) => b[1] - a[1]);
+            const sorted = Object.entries(deptAttendance).sort((a, b) => b[1].perPerson - a[1].perPerson);
             
-            let html = '';
-            sorted.forEach(([dept, count]) => {
+            let html = '<p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 15px;">Average days per person in selected period:</p>';
+            sorted.forEach(([dept, data]) => {
                 html += `
                     <div class="attendance-item">
                         <div>
                             <div class="attendance-name">${dept}</div>
-                            <div class="attendance-dept">${users[dept].length} colleagues</div>
+                            <div class="attendance-dept">${users[dept].length} colleagues • ${data.total} total days</div>
                         </div>
-                        <div class="attendance-count">${count}</div>
+                        <div class="attendance-count">${data.perPerson}</div>
                     </div>
                 `;
             });
