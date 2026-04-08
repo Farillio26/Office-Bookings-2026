@@ -1,0 +1,206 @@
+name: Daily Office Slack Notification
+
+on:
+  schedule:
+    # Runs at 8:00 AM UK time (GMT/BST handled by checking in script)
+    # 7:00 AM UTC in winter (GMT), 7:00 AM UTC in summer will be 8:00 AM BST
+    # Using 7:00 AM UTC which is 8:00 AM BST (summer) or 7:00 AM GMT (winter)
+    # For consistency, let's use 8:00 AM UTC which covers both reasonably
+    - cron: '0 8 * * 1-5'  # 8:00 AM UTC, Monday to Friday
+  workflow_dispatch:  # Allows manual trigger for testing
+
+jobs:
+  notify-slack:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Send Slack Notification
+        uses: actions/github-script@v7
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        with:
+          script: |
+            const https = require('https');
+            
+            // UK Bank Holidays 2026
+            const ukBankHolidays2026 = [
+              '2026-01-01', '2026-04-03', '2026-04-06', '2026-05-04',
+              '2026-05-25', '2026-08-31', '2026-12-25', '2026-12-28'
+            ];
+            
+            // Get today's date in UK timezone
+            const now = new Date();
+            const ukDate = new Date(now.toLocaleString('en-GB', { timeZone: 'Europe/London' }));
+            const year = ukDate.getFullYear();
+            const month = String(ukDate.getMonth() + 1).padStart(2, '0');
+            const day = String(ukDate.getDate()).padStart(2, '0');
+            const dateStr = `${year}-${month}-${day}`;
+            
+            // Check if it's a bank holiday
+            if (ukBankHolidays2026.includes(dateStr)) {
+              console.log('Today is a bank holiday. Skipping notification.');
+              return;
+            }
+            
+            // Format date nicely
+            const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = ukDate.toLocaleDateString('en-GB', options);
+            
+            // Fetch bookings from Firebase
+            const firebaseUrl = 'https://firestore.googleapis.com/v1/projects/farillio-desk-booking/databases/(default)/documents/bookingData/main';
+            
+            const fetchData = () => {
+              return new Promise((resolve, reject) => {
+                https.get(firebaseUrl, (res) => {
+                  let data = '';
+                  res.on('data', chunk => data += chunk);
+                  res.on('end', () => {
+                    try {
+                      resolve(JSON.parse(data));
+                    } catch (e) {
+                      reject(e);
+                    }
+                  });
+                }).on('error', reject);
+              });
+            };
+            
+            try {
+              const firebaseData = await fetchData();
+              const bookings = firebaseData.fields?.bookings?.mapValue?.fields || {};
+              
+              // Get today's bookings
+              const todayBookings = [];
+              
+              // Check regular desks (1-8)
+              for (let desk = 1; desk <= 8; desk++) {
+                const key = `${dateStr}_desk${desk}`;
+                if (bookings[key]?.stringValue) {
+                  todayBookings.push({
+                    name: bookings[key].stringValue,
+                    desk: `Desk ${desk}`
+                  });
+                }
+              }
+              
+              // Check floating desks (1-3)
+              for (let floating = 1; floating <= 3; floating++) {
+                const key = `${dateStr}_floating${floating}`;
+                if (bookings[key]?.stringValue) {
+                  todayBookings.push({
+                    name: bookings[key].stringValue,
+                    desk: `Floating ${floating}`
+                  });
+                }
+              }
+              
+              // Build Slack message
+              let message;
+              
+              if (todayBookings.length === 0) {
+                message = {
+                  blocks: [
+                    {
+                      type: "header",
+                      text: {
+                        type: "plain_text",
+                        text: `🏢 Farillio Office - ${formattedDate}`,
+                        emoji: true
+                      }
+                    },
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: "📭 *No bookings for today*\n\nThe office is looking quiet! Book a desk if you're planning to come in."
+                      }
+                    },
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk here>"
+                      }
+                    }
+                  ]
+                };
+              } else {
+                const bookingsList = todayBookings
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map(b => `• ${b.name} - ${b.desk}`)
+                  .join('\n');
+                
+                message = {
+                  blocks: [
+                    {
+                      type: "header",
+                      text: {
+                        type: "plain_text",
+                        text: `🏢 Farillio Office - ${formattedDate}`,
+                        emoji: true
+                      }
+                    },
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: `📍 *Who's in today:*\n${bookingsList}`
+                      }
+                    },
+                    {
+                      type: "context",
+                      elements: [
+                        {
+                          type: "mrkdwn",
+                          text: `👥 *Total: ${todayBookings.length} colleague${todayBookings.length === 1 ? '' : 's'}* in the office`
+                        }
+                      ]
+                    },
+                    {
+                      type: "divider"
+                    },
+                    {
+                      type: "section",
+                      text: {
+                        type: "mrkdwn",
+                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk> • 🎯 <https://farillio26.github.io/Office-Bookings-2026/incentives.html|View Incentives>"
+                      }
+                    }
+                  ]
+                };
+              }
+              
+              // Send to Slack
+              const webhookUrl = new URL(process.env.SLACK_WEBHOOK_URL);
+              const postData = JSON.stringify(message);
+              
+              const sendToSlack = () => {
+                return new Promise((resolve, reject) => {
+                  const req = https.request({
+                    hostname: webhookUrl.hostname,
+                    path: webhookUrl.pathname,
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Content-Length': Buffer.byteLength(postData)
+                    }
+                  }, (res) => {
+                    let data = '';
+                    res.on('data', chunk => data += chunk);
+                    res.on('end', () => resolve(data));
+                  });
+                  
+                  req.on('error', reject);
+                  req.write(postData);
+                  req.end();
+                });
+              };
+              
+              const result = await sendToSlack();
+              console.log('Slack notification sent:', result);
+              console.log(`Posted ${todayBookings.length} bookings for ${formattedDate}`);
+              
+            } catch (error) {
+              console.error('Error:', error);
+              core.setFailed(error.message);
+            }
