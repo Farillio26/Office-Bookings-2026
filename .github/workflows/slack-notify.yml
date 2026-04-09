@@ -6,7 +6,7 @@ on:
     # 7:00 AM UTC in winter (GMT), 7:00 AM UTC in summer will be 8:00 AM BST
     # Using 7:00 AM UTC which is 8:00 AM BST (summer) or 7:00 AM GMT (winter)
     # For consistency, let's use 8:00 AM UTC which covers both reasonably
-    - cron: '0 8 * * 1-5'  # 8:00 AM UTC, Monday to Friday
+    - cron: '0 7 * * 1-5'  # 8:00 AM UTC, Monday to Friday
   workflow_dispatch:  # Allows manual trigger for testing
 
 jobs:
