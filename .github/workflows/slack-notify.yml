@@ -2,11 +2,10 @@ name: Daily Office Slack Notification
 
 on:
   schedule:
-    # Runs at 8:00 AM UK time (GMT/BST handled by checking in script)
-    # 7:00 AM UTC in winter (GMT), 7:00 AM UTC in summer will be 8:00 AM BST
-    # Using 7:00 AM UTC which is 8:00 AM BST (summer) or 7:00 AM GMT (winter)
-    # For consistency, let's use 8:00 AM UTC which covers both reasonably
-    - cron: '0 7 * * 1-5'  # 8:00 AM UTC, Monday to Friday
+    # Run at both 7am and 8am UTC to cover BST and GMT
+    # The script will check if it's actually 8am UK time before posting
+    - cron: '0 7 * * 1-5'  # 7:00 AM UTC = 8:00 AM BST (summer)
+    - cron: '0 8 * * 1-5'  # 8:00 AM UTC = 8:00 AM GMT (winter)
   workflow_dispatch:  # Allows manual trigger for testing
 
 jobs:
@@ -22,6 +21,22 @@ jobs:
           script: |
             const https = require('https');
             
+            // Check if it's 8am UK time - if not, exit silently
+            const now = new Date();
+            const ukHourFormatter = new Intl.DateTimeFormat('en-GB', { 
+              timeZone: 'Europe/London',
+              hour: 'numeric',
+              hour12: false
+            });
+            const ukHour = parseInt(ukHourFormatter.format(now));
+            
+            if (ukHour !== 8) {
+              console.log(`Current UK hour is ${ukHour}, not 8am. Skipping.`);
+              return;
+            }
+            
+            console.log('It is 8am UK time. Proceeding with notification...');
+            
             // UK Bank Holidays 2026
             const ukBankHolidays2026 = [
               '2026-01-01', '2026-04-03', '2026-04-06', '2026-05-04',
@@ -29,7 +44,6 @@ jobs:
             ];
             
             // Get today's date in UK timezone properly
-            const now = new Date();
             const ukFormatter = new Intl.DateTimeFormat('en-GB', { 
               timeZone: 'Europe/London',
               year: 'numeric',
@@ -45,6 +59,13 @@ jobs:
             // Check if it's a bank holiday
             if (ukBankHolidays2026.includes(dateStr)) {
               console.log('Today is a bank holiday. Skipping notification.');
+              return;
+            }
+            
+            // Check if it's a weekend (extra safety)
+            const dayOfWeek = now.toLocaleDateString('en-GB', { timeZone: 'Europe/London', weekday: 'short' });
+            if (dayOfWeek === 'Sat' || dayOfWeek === 'Sun') {
+              console.log('Today is a weekend. Skipping notification.');
               return;
             }
             
@@ -175,7 +196,7 @@ jobs:
                       type: "section",
                       text: {
                         type: "mrkdwn",
-                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk> • 🎯 <https://farillio26.github.io/Office-Bookings-2026/incentives.html|View Incentives>"
+                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk>"
                       }
                     }
                   ]
