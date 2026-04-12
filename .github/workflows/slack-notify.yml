@@ -2,10 +2,10 @@ name: Daily Office Slack Notification
 
 on:
   schedule:
-    # Run at both 7am and 8am UTC to cover BST and GMT
-    # The script will check if it's actually 8am UK time before posting
-    - cron: '0 7 * * 1-5'  # 7:00 AM UTC = 8:00 AM BST (summer)
-    - cron: '0 8 * * 1-5'  # 8:00 AM UTC = 8:00 AM GMT (winter)
+    # 7:00 AM UTC = 8:00 AM BST (British Summer Time, March-October)
+    # NOTE: When clocks go back to GMT in late October, change to '0 8 * * 1-5'
+    # When clocks go forward to BST in late March, change back to '0 7 * * 1-5'
+    - cron: '0 7 * * 1-5'
   workflow_dispatch:  # Allows manual trigger for testing
 
 jobs:
@@ -21,29 +21,14 @@ jobs:
           script: |
             const https = require('https');
             
-            // Check if it's 8am UK time - if not, exit silently
-            const now = new Date();
-            const ukHourFormatter = new Intl.DateTimeFormat('en-GB', { 
-              timeZone: 'Europe/London',
-              hour: 'numeric',
-              hour12: false
-            });
-            const ukHour = parseInt(ukHourFormatter.format(now));
-            
-            if (ukHour !== 8) {
-              console.log(`Current UK hour is ${ukHour}, not 8am. Skipping.`);
-              return;
-            }
-            
-            console.log('It is 8am UK time. Proceeding with notification...');
-            
             // UK Bank Holidays 2026
             const ukBankHolidays2026 = [
               '2026-01-01', '2026-04-03', '2026-04-06', '2026-05-04',
               '2026-05-25', '2026-08-31', '2026-12-25', '2026-12-28'
             ];
             
-            // Get today's date in UK timezone properly
+            // Get today's date in UK timezone
+            const now = new Date();
             const ukFormatter = new Intl.DateTimeFormat('en-GB', { 
               timeZone: 'Europe/London',
               year: 'numeric',
@@ -152,7 +137,7 @@ jobs:
                       type: "section",
                       text: {
                         type: "mrkdwn",
-                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk here>"
+                        text: "🗓️ <https://farillio26.github.io/Office-Bookings-2026/|Book your desk>"
                       }
                     }
                   ]
