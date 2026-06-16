@@ -251,10 +251,17 @@
             justify-content: center;
             padding-bottom: 60%;
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: 1.4rem;
             text-align: center;
             color: white;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Winner wheel: hide the cramped, rotating names — the result
+           is shown clearly in the banner below instead. Prize wheel
+           keeps its emoji, which stays legible. */
+        #winnerWheel .wheel-segment-content {
+            font-size: 0;
         }
 
         .wheel-pointer {
@@ -316,16 +323,18 @@
         }
 
         .result-display {
-            background: linear-gradient(145deg, var(--gold), #FFA500);
-            color: #1D1C1C;
-            padding: 20px 30px;
+            background: linear-gradient(145deg, var(--green), var(--green-light));
+            color: #FFFFFF;
+            padding: 22px 30px;
             border-radius: 15px;
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: 800;
+            line-height: 1.2;
             margin-top: 20px;
             display: none;
             animation: resultPop 0.5s ease;
-            box-shadow: 0 10px 30px rgba(255,215,0,0.4);
+            box-shadow: 0 10px 30px rgba(0,88,82,0.5);
+            border: 2px solid rgba(255,255,255,0.25);
         }
 
         @keyframes resultPop {
@@ -383,8 +392,9 @@
         }
 
         .winner-box .name, .prize-box .prize {
-            font-size: 1.8rem;
+            font-size: 2.2rem;
             font-weight: 800;
+            line-height: 1.2;
         }
 
         .gets-text {
@@ -478,11 +488,11 @@
                 <div class="selector-grid">
                     <div>
                         <label for="startDate">From Date</label>
-                        <input type="date" id="startDate" onchange="updateEligibleList()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
+                        <input type="date" id="startDate" onchange="onStartDateChange()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
                     </div>
                     <div>
                         <label for="endDate">To Date</label>
-                        <input type="date" id="endDate" onchange="updateEligibleList()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
+                        <input type="date" id="endDate" onchange="onEndDateChange()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
                     </div>
                 </div>
                 <div class="eligible-list">
@@ -649,6 +659,38 @@
             }
             
             return Array.from(attendees).sort();
+        }
+
+        // Tracks whether the user has hand-picked an end date.
+        // While false, changing the start date auto-fills a 14-day window.
+        let endDateManuallySet = false;
+
+        window.onEndDateChange = function() {
+            endDateManuallySet = true;
+            updateEligibleList();
+        }
+
+        window.onStartDateChange = function() {
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+
+            // Auto-fill a two-week window (14 days inclusive: start + 13)
+            // unless the user has already set the end date themselves.
+            if (startInput.value && !endDateManuallySet) {
+                const start = new Date(startInput.value);
+                start.setDate(start.getDate() + 13);
+
+                // Keep within the picker's allowed range.
+                const max = new Date('2026-12-31');
+                if (start > max) start.setTime(max.getTime());
+
+                const y = start.getFullYear();
+                const m = String(start.getMonth() + 1).padStart(2, '0');
+                const d = String(start.getDate()).padStart(2, '0');
+                endInput.value = `${y}-${m}-${d}`;
+            }
+
+            updateEligibleList();
         }
 
         window.updateEligibleList = function() {
