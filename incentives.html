@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farillio Incentives Hub 🎯</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/farillio.css">
     <style>
         * {
             margin: 0;
@@ -12,24 +13,10 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #FF5F3C;
-            --primary-dark: #DA4628;
-            --green: #005852;
-            --green-light: #49796B;
-            --coral: #F98C74;
-            --gold: #FFD700;
-            --purple: #8B5CF6;
-            --pink: #EC4899;
-            --bg: #FBF9F9;
-            --surface: #FFFFFF;
-            --text: #1D1C1C;
-            --border: #DFD2CE;
-        }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1D1C1C 0%, #2D2A2E 50%, #1D1C1C 100%);
+            background: var(--stage);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -42,10 +29,11 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: var(--stage-soft);
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(255,95,60,0.4);
+            border-top: 3px solid var(--comet-orange);
+            box-shadow: var(--shadow-lg);
             margin-bottom: 30px;
             text-align: center;
             position: relative;
@@ -66,7 +54,7 @@
             height: 70px;
             border-radius: 15px;
             overflow: hidden;
-            background: white;
+            background: var(--comet-blush);
             padding: 8px;
             margin: 0 auto 15px;
         }
@@ -132,9 +120,9 @@
         }
 
         .nav-tab.active {
-            background: white;
-            color: var(--primary);
-            border-color: white;
+            background: var(--white);
+            color: var(--comet-orange-deep);
+            border-color: var(--comet-orange);
         }
 
         .tab-content {
@@ -178,7 +166,7 @@
         select, input[type="date"] {
             width: 100%;
             padding: 15px;
-            border: 3px solid #DFD2CE;
+            border: 3px solid var(--border);
             border-radius: 12px;
             font-size: 1rem;
             font-family: 'Poppins', sans-serif;
@@ -188,13 +176,343 @@
             background: white;
         }
 
+        .year-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        /* --- Raffle cooldown --- */
+
+        .eligible-name.blocked {
+            background: var(--light-grey);
+            color: var(--taupe);
+            border: 2px dashed var(--border-strong);
+            text-decoration: line-through;
+            text-decoration-color: var(--border-strong);
+            cursor: help;
+        }
+
+        .blocked-tag {
+            display: inline-block;
+            margin-left: 8px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: var(--border);
+            color: var(--fg2);
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            vertical-align: middle;
+        }
+
+        .cooldown-info,
+        .cooldown-warning {
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .cooldown-info {
+            background: var(--success-bg);
+            border: 2px solid var(--moss);
+            color: var(--green);
+        }
+
+        .cooldown-warning {
+            background: var(--danger-bg);
+            border: 2px solid var(--coral);
+            color: var(--danger);
+        }
+
+        .cooldown-warning.override-on {
+            background: var(--warning-bg);
+            border-color: var(--gold);
+            color: var(--taupe);
+        }
+
+        .cooldown-override {
+            display: inline-block;
+            margin-left: 10px;
+            padding: 6px 14px;
+            border: none;
+            border-radius: 999px;
+            background: var(--primary);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .cooldown-override:hover {
+            background: var(--primary-dark);
+        }
+
+        /* --- Saving a win --- */
+
+        .save-win {
+            margin: 18px 0 6px;
+        }
+
+        .save-win-btn, .add-win-btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 999px;
+            background: var(--green);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .save-win-btn:hover:not(:disabled),
+        .add-win-btn:hover:not(:disabled) {
+            background: var(--green-light);
+            transform: translateY(-2px);
+        }
+
+        .save-win-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .add-win-btn {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .save-win-status {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            min-height: 1.2em;
+        }
+
+        .save-win-status.ok { color: var(--green); }
+        .save-win-status.error { color: var(--primary-dark); }
+
+        /* --- Winners dashboard --- */
+
+        .latest-win { margin-bottom: 24px; }
+
+        .latest-win-card, .latest-win-empty {
+            background: linear-gradient(135deg, var(--green) 0%, var(--green-light) 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .latest-win-empty {
+            background: var(--surface);
+            color: var(--text);
+            border: 3px dashed var(--border);
+        }
+
+        .latest-win-empty h2 { margin-bottom: 8px; }
+
+        .latest-win-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.85;
+        }
+
+        .latest-win-name {
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin: 10px 0 4px;
+        }
+
+        .latest-win-prize {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .winners-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .winners-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .winners-panel {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 26px;
+            box-shadow: 0 4px 20px rgba(29, 28, 28, 0.06);
+        }
+
+        .winners-panel h2 {
+            font-size: 1.15rem;
+            margin-bottom: 16px;
+            color: var(--green);
+        }
+
+        .winners-list { max-height: 520px; overflow-y: auto; }
+
+        .winner-row {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 12px;
+            align-items: center;
+            padding: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            margin-bottom: 10px;
+        }
+
+        .winner-row.is-blocking {
+            border-color: var(--coral);
+            background: var(--bg-subtle);
+        }
+
+        .winner-row-name { font-weight: 700; color: var(--fg1); }
+        .winner-row-prize { font-size: 0.9rem; color: var(--fg2); }
+
+        .winner-row-meta { text-align: right; }
+        .winner-row-date { font-size: 0.85rem; font-weight: 600; color: var(--fg2); }
+
+        .winner-row-lock {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--comet-orange-deep);
+            margin-top: 2px;
+        }
+
+        .winner-row-delete {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--fg2);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .winner-row-delete:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .leaderboard-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: var(--bg-subtle);
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-name { font-weight: 700; color: var(--fg1); }
+        .leaderboard-last { font-size: 0.8rem; color: var(--fg2); }
+
+        .leaderboard-count {
+            min-width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--green);
+            color: white;
+            font-weight: 800;
+        }
+
+        .add-win-help {
+            font-size: 0.88rem;
+            color: var(--fg2);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .add-win-form { display: grid; gap: 14px; }
+
+        .add-win-form input[type="text"] {
+            width: 100%;
+            padding: 13px;
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: white;
+        }
+
+        .add-win-form input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 900px) {
+            .winners-grid { grid-template-columns: 1fr; }
+            .winners-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .year-selector .year-nav {
+            width: 46px;
+            height: 46px;
+            border: 3px solid var(--border);
+            background: var(--green);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .year-selector .year-nav:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .year-selector .year-nav:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .year-selector .year-select {
+            width: auto;
+            min-width: 140px;
+            padding: 12px 18px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
         select:focus, input[type="date"]:focus {
             outline: none;
             border-color: var(--primary);
         }
 
         .eligible-list {
-            background: #F5F1F0;
+            background: var(--bg-subtle);
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
@@ -222,7 +540,7 @@
         }
 
         .no-eligible {
-            color: #B72E15;
+            color: var(--comet-orange-deep);
             font-weight: 600;
         }
 
@@ -242,7 +560,7 @@
         }
 
         .wheel-panel {
-            background: linear-gradient(145deg, #2D2A2E, #1D1C1C);
+            background: linear-gradient(145deg, var(--stage-soft), var(--stage));
             border-radius: 25px;
             padding: 25px;
             text-align: center;
@@ -359,8 +677,8 @@
         }
 
         .result-display {
-            background: linear-gradient(145deg, var(--gold), #FFA500);
-            color: #1D1C1C;
+            background: linear-gradient(145deg, var(--gold), var(--gold-deep));
+            color: var(--comet-ink);
             padding: 20px 30px;
             border-radius: 15px;
             font-size: 1.5rem;
@@ -382,7 +700,7 @@
         }
 
         .final-result {
-            background: linear-gradient(145deg, var(--surface), #F5F1F0);
+            background: linear-gradient(145deg, var(--surface), var(--bg-subtle));
             border-radius: 25px;
             padding: 40px;
             text-align: center;
@@ -503,8 +821,8 @@
 
         .streak-badge {
             margin-left: auto;
-            background: linear-gradient(135deg, var(--gold), #FFA500);
-            color: #1D1C1C;
+            background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+            color: var(--comet-ink);
             padding: 8px 15px;
             border-radius: 20px;
             font-weight: 800;
@@ -516,7 +834,7 @@
             align-items: center;
             gap: 15px;
             padding: 12px 0;
-            border-bottom: 1px solid #EEE8E6;
+            border-bottom: 1px solid var(--light-grey);
         }
 
         .incentive-item:last-child {
@@ -541,13 +859,13 @@
 
         .incentive-requirement {
             font-size: 0.8rem;
-            color: #5C5355;
+            color: var(--text-light);
         }
 
         .progress-bar {
             width: 100%;
             height: 8px;
-            background: #EEE8E6;
+            background: var(--light-grey);
             border-radius: 4px;
             margin-top: 8px;
             overflow: hidden;
@@ -575,18 +893,18 @@
         }
 
         .status-unlocked {
-            background: #E8F5E9;
-            color: #2E7D32;
+            background: var(--success-bg);
+            color: var(--forest);
         }
 
         .status-progress {
-            background: #FFF3E0;
-            color: #E65100;
+            background: var(--warning-bg);
+            color: var(--taupe);
         }
 
         .status-locked {
-            background: #ECEFF1;
-            color: #546E7A;
+            background: var(--info-bg);
+            color: var(--info);
         }
 
         /* Team Summary */
@@ -614,19 +932,19 @@
         .summary-stat {
             text-align: center;
             padding: 20px;
-            background: #F5F1F0;
+            background: var(--bg-subtle);
             border-radius: 15px;
         }
 
         .summary-stat .value {
             font-size: 2.5rem;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--comet-orange-deep);
         }
 
         .summary-stat .label {
             font-size: 0.9rem;
-            color: #5C5355;
+            color: var(--text-light);
             margin-top: 5px;
         }
 
@@ -688,6 +1006,8 @@
             <p class="subtitle">Rewards for office attendance</p>
         </header>
 
+        <div class="year-selector" id="yearSelector"></div>
+
         <div id="loadingMessage" class="loading-message">
             <div class="loading-spinner"></div>
             <p>Loading incentive data...</p>
@@ -698,12 +1018,13 @@
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="switchTab('tracker')">📊 Incentive Tracker</button>
                 <button class="nav-tab" onclick="switchTab('raffle')">🎰 Raffle Spinner</button>
+                <button class="nav-tab" onclick="switchTab('winners')">🏆 Winners Log</button>
             </div>
 
             <!-- TRACKER TAB -->
             <div id="tracker-tab" class="tab-content active">
                 <div class="team-summary">
-                    <h2>📈 Team Overview</h2>
+                    <h2>📈 Team Overview — <span class="year-label"></span></h2>
                     <div class="summary-stats">
                         <div class="summary-stat">
                             <div class="value" id="totalEligibleVouchers">0</div>
@@ -737,15 +1058,16 @@
                     <div class="selector-grid">
                         <div>
                             <label for="startDate">From Date</label>
-                            <input type="date" id="startDate" onchange="updateEligibleList()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
+                            <input type="date" id="startDate" onchange="updateEligibleList()">
                         </div>
                         <div>
                             <label for="endDate">To Date</label>
-                            <input type="date" id="endDate" onchange="updateEligibleList()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
+                            <input type="date" id="endDate" onchange="updateEligibleList()">
                         </div>
                     </div>
                     <div class="eligible-list">
                         <h3>🎟️ Eligible Attendees for Selected Period:</h3>
+                        <div id="cooldownNotice"></div>
                         <div id="eligibleNames" class="eligible-names">
                             <span class="no-eligible">Loading...</span>
                         </div>
@@ -795,7 +1117,72 @@
                             <div id="finalPrize" class="prize"></div>
                         </div>
                     </div>
+                    <div class="save-win">
+                        <button id="saveWinBtn" class="save-win-btn" onclick="saveWinToLog()">💾 Save to winners log</button>
+                        <div id="saveWinStatus" class="save-win-status"></div>
+                    </div>
                     <button class="reset-btn" onclick="resetRaffle()">🔄 New Draw</button>
+                </div>
+            </div>
+
+            <!-- WINNERS TAB -->
+            <div id="winners-tab" class="tab-content">
+                <div class="latest-win" id="latestWin"></div>
+
+                <div class="winners-stats">
+                    <div class="summary-stat">
+                        <div class="value" id="winsThisYear">0</div>
+                        <div class="label">🎁 Prizes won <span class="year-label"></span></div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value" id="winsAllTime">0</div>
+                        <div class="label">📜 Prizes won all time</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value" id="onCooldown">0</div>
+                        <div class="label">🔒 On cooldown now</div>
+                    </div>
+                    <div class="summary-stat">
+                        <div class="value" id="distinctWinners">0</div>
+                        <div class="label">👥 Different winners</div>
+                    </div>
+                </div>
+
+                <div class="winners-grid">
+                    <div class="winners-panel">
+                        <h2>📜 Every win, newest first</h2>
+                        <div id="winnersList" class="winners-list"></div>
+                    </div>
+
+                    <div class="winners-panel">
+                        <h2>🏅 Wins per person</h2>
+                        <div id="winnersLeaderboard" class="winners-leaderboard"></div>
+
+                        <h2 style="margin-top: 28px;">➕ Add a past win</h2>
+                        <p class="add-win-help">
+                            Use this to enter the winners from before the log existed, so the
+                            cooldown applies straight away. The draw runs fortnightly, so the
+                            last six or so will cover the <span class="cooldown-months"></span>-month window.
+                        </p>
+                        <div class="add-win-form">
+                            <div>
+                                <label for="newWinnerName">Who won</label>
+                                <input type="text" id="newWinnerName" list="colleagueNames" placeholder="Name" autocomplete="off">
+                                <datalist id="colleagueNames"></datalist>
+                            </div>
+                            <div>
+                                <label for="newWinnerPrize">What they won</label>
+                                <input type="text" id="newWinnerPrize" list="prizeNames" placeholder="Prize" autocomplete="off">
+                                <datalist id="prizeNames"></datalist>
+                            </div>
+                            <div>
+                                <label for="newWinnerDate">Draw date</label>
+                                <input type="date" id="newWinnerDate">
+                            </div>
+                            <button type="button" class="add-win-btn" onclick="addPastWin()">Add to log</button>
+                            <div id="addWinStatus" class="save-win-status"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -805,6 +1192,27 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import {
+            isBankHoliday,
+            isWorkingDay,
+            toDateStr,
+            getSelectedYear,
+            renderYearPicker,
+            applyYearToDateInputs
+        } from "./js/calendar-core.js";
+        import {
+            COOLDOWN_MONTHS,
+            subscribeWinners,
+            addWinner,
+            removeWinner,
+            getBlockedWinners,
+            isBlocked,
+            blockingWin,
+            eligibleAgainOn,
+            formatDate,
+            winsByPerson,
+            winnersInYear
+        } from "./js/winners.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -855,25 +1263,33 @@
             { id: 'champion', name: '£250 Champion Bonus', emoji: '💰', weeks: 26, description: 'Half-year champion!', type: 'individual' }
         ];
 
-        // UK Bank Holidays 2026
-        const ukBankHolidays2026 = [
-            '2026-01-01', '2026-04-03', '2026-04-06', '2026-05-04',
-            '2026-05-25', '2026-08-31', '2026-12-25', '2026-12-28'
-        ];
+        // Bank holidays are computed per year — see js/calendar-core.js.
 
         let users = {};
         let bookings = {};
+        let currentYear = getSelectedYear();
+
+        // Raffle winners log and the resulting cooldown.
+        let winners = [];
+        let blockedWinners = new Map();
+
+        // Everyone in the date range (including blocked), and the names the
+        // wheel may actually land on.
         let eligibleAttendees = [];
+        let drawPool = [];
+
+        // Lets Merlie run a draw anyway if the cooldown has blocked everybody.
+        let ignoreCooldown = false;
         let selectedWinner = null;
         let selectedPrize = null;
 
         // Wheel colors
+        // Muted complimentary palette. Each clears 4.2:1 against the
+        // white segment labels; the Tailwind rainbow it replaced did not.
         const wheelColors = [
-            '#FF5F3C', '#005852', '#49796B', '#F98C74', '#8B5CF6',
-            '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#EF4444',
-            '#6366F1', '#14B8A6', '#F97316', '#84CC16', '#A855F7',
-            '#22D3EE', '#FB7185', '#4ADE80', '#FBBF24', '#818CF8',
-            '#2DD4BF', '#FB923C', '#A3E635', '#C084FC'
+            'var(--comet-orange-deep)', 'var(--green)', 'var(--plum)', 'var(--steel-blue)',
+            'var(--brick)', 'var(--moss)', 'var(--heather)', 'var(--cornflower)',
+            'var(--forest)', 'var(--taupe)', 'var(--ink-navy-soft)', 'var(--comet-orange-dark)'
         ];
 
         // Tab switching
@@ -893,16 +1309,6 @@
             }
         }
 
-        function isBankHoliday(dateStr) {
-            return ukBankHolidays2026.includes(dateStr);
-        }
-
-        function isWorkingDay(date) {
-            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-            return dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr);
-        }
-
         function getUserDepartment(userName) {
             for (let dept in users) {
                 if (users[dept].includes(userName)) {
@@ -912,13 +1318,22 @@
             return null;
         }
 
+        // First Monday on or after 1 January of the given year.
+        function firstMondayOfYear(year) {
+            const date = new Date(year, 0, 1);
+            // getDay(): 0 = Sun, 1 = Mon ... advance to the next Monday.
+            const offset = (1 - date.getDay() + 7) % 7;
+            date.setDate(date.getDate() + offset);
+            return date;
+        }
+
         // Calculate consecutive weeks for a user
         function calculateConsecutiveWeeks(userName) {
-            // Get all weeks in 2026
+            // Get all weeks in the selected year
             const weeks = [];
-            let currentWeekStart = new Date(2026, 0, 6); // First Monday of 2026
-            
-            while (currentWeekStart.getFullYear() === 2026) {
+            let currentWeekStart = firstMondayOfYear(currentYear);
+
+            while (currentWeekStart.getFullYear() === currentYear) {
                 weeks.push(new Date(currentWeekStart));
                 currentWeekStart.setDate(currentWeekStart.getDate() + 7);
             }
@@ -935,10 +1350,10 @@
                     const checkDate = new Date(weekStart);
                     checkDate.setDate(checkDate.getDate() + d);
                     
-                    if (checkDate.getFullYear() !== 2026) continue;
+                    if (checkDate.getFullYear() !== currentYear) continue;
                     if (!isWorkingDay(checkDate)) continue;
-                    
-                    const dateStr = `${checkDate.getFullYear()}-${String(checkDate.getMonth() + 1).padStart(2, '0')}-${String(checkDate.getDate()).padStart(2, '0')}`;
+
+                    const dateStr = toDateStr(checkDate);
                     
                     // Check all desks (1-8) and floating desks (1-3)
                     for (let desk = 1; desk <= 8; desk++) {
@@ -1116,28 +1531,80 @@
             }
             
             eligibleAttendees = getEligibleAttendees(startDate, endDate);
-            
+
+            // Anyone who has won in the last COOLDOWN_MONTHS still shows in the
+            // list, but shaded, and the wheel never lands on them.
+            drawPool = ignoreCooldown
+                ? [...eligibleAttendees]
+                : eligibleAttendees.filter(name => !isBlocked(blockedWinners, name));
+
             const container = document.getElementById('eligibleNames');
-            
+            const notice = document.getElementById('cooldownNotice');
+            const spinBtn = document.getElementById('spinWinnerBtn');
+
             if (eligibleAttendees.length === 0) {
                 container.innerHTML = '<span class="no-eligible">No bookings found for this period. Try different dates!</span>';
-                document.getElementById('spinWinnerBtn').disabled = true;
-            } else {
-                container.innerHTML = eligibleAttendees.map(name => 
-                    `<span class="eligible-name">${name}</span>`
-                ).join('');
-                document.getElementById('spinWinnerBtn').disabled = false;
-                buildWinnerWheel();
+                spinBtn.disabled = true;
+                notice.innerHTML = '';
+                return;
             }
+
+            container.innerHTML = eligibleAttendees.map(name => {
+                const win = ignoreCooldown ? null : blockingWin(blockedWinners, name);
+                if (!win) {
+                    return `<span class="eligible-name">${name}</span>`;
+                }
+                const until = formatDate(eligibleAgainOn(win));
+                const title = `Won ${win.emoji || '🎁'} ${win.prize} on ${formatDate(win.date)} — back in the draw from ${until}`;
+                return `<span class="eligible-name blocked" title="${title.replace(/"/g, '&quot;')}">${name}<span class="blocked-tag">🔒 until ${until}</span></span>`;
+            }).join('');
+
+            const blockedCount = eligibleAttendees.length - drawPool.length;
+
+            if (drawPool.length === 0) {
+                notice.innerHTML = `
+                    <div class="cooldown-warning">
+                        <strong>Everyone in this period has won in the last ${COOLDOWN_MONTHS} months.</strong>
+                        Widen the dates, or run the draw anyway.
+                        <button type="button" class="cooldown-override" onclick="toggleCooldown(true)">Ignore the cooldown for this draw</button>
+                    </div>
+                `;
+                spinBtn.disabled = true;
+                return;
+            }
+
+            if (ignoreCooldown) {
+                notice.innerHTML = `
+                    <div class="cooldown-warning override-on">
+                        <strong>Cooldown is off for this draw.</strong>
+                        Recent winners can win again.
+                        <button type="button" class="cooldown-override" onclick="toggleCooldown(false)">Turn it back on</button>
+                    </div>
+                `;
+            } else if (blockedCount > 0) {
+                notice.innerHTML = `<div class="cooldown-info">🔒 ${blockedCount} ${blockedCount === 1 ? 'person is' : 'people are'} shaded out — they won in the last ${COOLDOWN_MONTHS} months. ${drawPool.length} in the draw.</div>`;
+            } else {
+                notice.innerHTML = `<div class="cooldown-info">All ${drawPool.length} in the draw — nobody is on cooldown.</div>`;
+            }
+
+            spinBtn.disabled = false;
+            buildWinnerWheel();
+        }
+
+        window.toggleCooldown = function(off) {
+            ignoreCooldown = off;
+            resetRaffle();
         }
 
         function buildWinnerWheel() {
             const wheel = document.getElementById('winnerWheel');
             wheel.innerHTML = '';
-            
-            const segmentAngle = 360 / eligibleAttendees.length;
-            
-            eligibleAttendees.forEach((name, index) => {
+
+            if (drawPool.length === 0) return;
+
+            const segmentAngle = 360 / drawPool.length;
+
+            drawPool.forEach((name, index) => {
                 const segment = document.createElement('div');
                 segment.className = 'wheel-segment';
                 segment.style.transform = `rotate(${index * segmentAngle}deg) skewY(${90 - segmentAngle}deg)`;
@@ -1176,16 +1643,16 @@
         }
 
         window.spinWinnerWheel = function() {
-            if (eligibleAttendees.length === 0) return;
-            
+            if (drawPool.length === 0) return;
+
             const btn = document.getElementById('spinWinnerBtn');
             btn.disabled = true;
-            
+
             const wheel = document.getElementById('winnerWheel');
-            const winnerIndex = Math.floor(Math.random() * eligibleAttendees.length);
-            selectedWinner = eligibleAttendees[winnerIndex];
-            
-            const segmentAngle = 360 / eligibleAttendees.length;
+            const winnerIndex = Math.floor(Math.random() * drawPool.length);
+            selectedWinner = drawPool[winnerIndex];
+
+            const segmentAngle = 360 / drawPool.length;
             const targetAngle = 360 * 5 + (360 - (winnerIndex * segmentAngle + segmentAngle / 2));
             
             wheel.style.transform = `rotate(${targetAngle}deg)`;
@@ -1225,8 +1692,192 @@
             document.getElementById('finalWinner').textContent = selectedWinner;
             document.getElementById('finalPrize').textContent = `${selectedPrize.emoji} ${selectedPrize.name}`;
             document.getElementById('finalResult').classList.add('show');
-            
+
+            // A draw isn't recorded until it's saved, so practice spins don't
+            // end up in the log.
+            const btn = document.getElementById('saveWinBtn');
+            btn.disabled = false;
+            btn.textContent = '💾 Save to winners log';
+            document.getElementById('saveWinStatus').textContent = '';
+
             launchConfetti();
+        }
+
+        window.saveWinToLog = async function() {
+            if (!selectedWinner || !selectedPrize) return;
+
+            const btn = document.getElementById('saveWinBtn');
+            const status = document.getElementById('saveWinStatus');
+
+            btn.disabled = true;
+            btn.textContent = 'Saving…';
+            status.textContent = '';
+
+            try {
+                await addWinner(db, winners, {
+                    name: selectedWinner,
+                    prize: selectedPrize.name,
+                    emoji: selectedPrize.emoji,
+                    date: toDateStr(new Date())
+                });
+                btn.textContent = '✅ Saved';
+                status.className = 'save-win-status ok';
+                status.textContent = `${selectedWinner} is now on cooldown for ${COOLDOWN_MONTHS} months.`;
+            } catch (error) {
+                console.error('Could not save the win:', error);
+                btn.disabled = false;
+                btn.textContent = '💾 Save to winners log';
+                status.className = 'save-win-status error';
+                status.textContent = 'Could not save — check the connection and try again.';
+            }
+        }
+
+        window.addPastWin = async function() {
+            const nameInput = document.getElementById('newWinnerName');
+            const prizeInput = document.getElementById('newWinnerPrize');
+            const dateInput = document.getElementById('newWinnerDate');
+            const status = document.getElementById('addWinStatus');
+
+            const name = nameInput.value.trim();
+            const prize = prizeInput.value.trim();
+            const date = dateInput.value;
+
+            if (!name) {
+                status.className = 'save-win-status error';
+                status.textContent = 'Who won?';
+                nameInput.focus();
+                return;
+            }
+            if (!date) {
+                status.className = 'save-win-status error';
+                status.textContent = 'Which date was the draw?';
+                dateInput.focus();
+                return;
+            }
+
+            const known = prizes.find(p => p.name.toLowerCase() === prize.toLowerCase());
+
+            try {
+                await addWinner(db, winners, {
+                    name,
+                    prize: prize || 'Prize not recorded',
+                    emoji: known ? known.emoji : '🎁',
+                    date
+                });
+                nameInput.value = '';
+                prizeInput.value = '';
+                status.className = 'save-win-status ok';
+                status.textContent = `Added ${name}, ${formatDate(date)}.`;
+            } catch (error) {
+                console.error('Could not add the win:', error);
+                status.className = 'save-win-status error';
+                status.textContent = 'Could not save — check the connection and try again.';
+            }
+        }
+
+        window.deleteWin = async function(id) {
+            const win = winners.find(w => w.id === id);
+            if (!win) return;
+
+            const ok = confirm(`Remove ${win.name} winning ${win.prize} on ${formatDate(win.date)} from the log?\n\nThis also lifts their cooldown.`);
+            if (!ok) return;
+
+            try {
+                await removeWinner(db, winners, id);
+            } catch (error) {
+                console.error('Could not remove the win:', error);
+                alert('Could not remove that entry — check the connection and try again.');
+            }
+        }
+
+        /* ------------------------------------------------------------ */
+        /* Winners dashboard                                            */
+        /* ------------------------------------------------------------ */
+
+        function renderWinners() {
+            const list = document.getElementById('winnersList');
+            const latest = document.getElementById('latestWin');
+            const leaderboard = document.getElementById('winnersLeaderboard');
+
+            document.querySelectorAll('.cooldown-months').forEach(el => {
+                el.textContent = COOLDOWN_MONTHS;
+            });
+
+            // Headline: the most recent win, for announcing to the team.
+            if (winners.length === 0) {
+                latest.innerHTML = `
+                    <div class="latest-win-empty">
+                        <h2>No wins recorded yet</h2>
+                        <p>Save a draw from the Raffle Spinner, or add past winners below so the cooldown starts working straight away.</p>
+                    </div>
+                `;
+            } else {
+                const win = winners[0];
+                latest.innerHTML = `
+                    <div class="latest-win-card">
+                        <div class="latest-win-label">Most recent win · ${formatDate(win.date)}</div>
+                        <div class="latest-win-name">🏆 ${win.name}</div>
+                        <div class="latest-win-prize">${win.emoji || '🎁'} ${win.prize}</div>
+                    </div>
+                `;
+            }
+
+            // Stats
+            const thisYear = winnersInYear(winners, currentYear);
+            const perPerson = winsByPerson(winners);
+            document.getElementById('winsThisYear').textContent = thisYear.length;
+            document.getElementById('winsAllTime').textContent = winners.length;
+            document.getElementById('onCooldown').textContent = blockedWinners.size;
+            document.getElementById('distinctWinners').textContent = perPerson.length;
+
+            // Full log
+            if (winners.length === 0) {
+                list.innerHTML = '<p class="no-eligible">Nothing logged yet.</p>';
+            } else {
+                list.innerHTML = winners.map(win => {
+                    const blocked = isBlocked(blockedWinners, win.name)
+                        && blockingWin(blockedWinners, win.name).id === win.id;
+                    const until = blocked ? formatDate(eligibleAgainOn(win)) : null;
+                    return `
+                        <div class="winner-row${blocked ? ' is-blocking' : ''}">
+                            <div class="winner-row-main">
+                                <div class="winner-row-name">${win.name}</div>
+                                <div class="winner-row-prize">${win.emoji || '🎁'} ${win.prize}</div>
+                            </div>
+                            <div class="winner-row-meta">
+                                <div class="winner-row-date">${formatDate(win.date)}</div>
+                                ${blocked ? `<div class="winner-row-lock">🔒 blocked until ${until}</div>` : ''}
+                            </div>
+                            <button type="button" class="winner-row-delete" onclick="deleteWin('${win.id}')" title="Remove this entry" aria-label="Remove this entry">✕</button>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Leaderboard
+            if (perPerson.length === 0) {
+                leaderboard.innerHTML = '<p class="no-eligible">Nobody yet.</p>';
+            } else {
+                leaderboard.innerHTML = perPerson.map(person => {
+                    const blocked = isBlocked(blockedWinners, person.name);
+                    return `
+                        <div class="leaderboard-row">
+                            <div>
+                                <div class="leaderboard-name">${person.name}${blocked ? ' <span class="blocked-tag">🔒 on cooldown</span>' : ''}</div>
+                                <div class="leaderboard-last">Last won ${formatDate(person.lastWin)}</div>
+                            </div>
+                            <div class="leaderboard-count">${person.count}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Keep the name and prize suggestions current.
+            const names = Object.values(users).flat().sort();
+            document.getElementById('colleagueNames').innerHTML =
+                names.map(n => `<option value="${n}"></option>`).join('');
+            document.getElementById('prizeNames').innerHTML =
+                prizes.map(p => `<option value="${p.name}"></option>`).join('');
         }
 
         window.resetRaffle = function() {
@@ -1242,12 +1893,17 @@
             
             document.getElementById('spinWinnerBtn').disabled = false;
             document.getElementById('spinPrizeBtn').disabled = true;
-            
+
+            const saveBtn = document.getElementById('saveWinBtn');
+            saveBtn.disabled = false;
+            saveBtn.textContent = '💾 Save to winners log';
+            document.getElementById('saveWinStatus').textContent = '';
+
             updateEligibleList();
         }
 
         function launchConfetti() {
-            const colors = ['#FF5F3C', '#FFD700', '#005852', '#F98C74', '#8B5CF6', '#EC4899'];
+            const colors = ['var(--primary)', 'var(--coral)', 'var(--camel)', 'var(--teal)', 'var(--rose)', 'var(--comet-blush)'];
             
             for (let i = 0; i < 150; i++) {
                 setTimeout(() => {
@@ -1269,10 +1925,51 @@
             }
         }
 
+        // Point the page at a given year.
+        function applyYear(year, { rerender = true } = {}) {
+            currentYear = year;
+            document.querySelectorAll('.year-label').forEach(el => {
+                el.textContent = year;
+            });
+
+            applyYearToDateInputs(
+                document.getElementById('startDate'),
+                document.getElementById('endDate'),
+                year
+            );
+
+            if (rerender) {
+                buildIncentiveTracker();
+                updateEligibleList();
+                renderWinners();
+            }
+        }
+
         // Initialize
         function init() {
+            // Default the "add a past win" date to today.
+            document.getElementById('newWinnerDate').value = toDateStr(new Date());
+
+            // The winners log lives in its own document, so it has its own listener.
+            subscribeWinners(db, (list) => {
+                winners = list;
+                blockedWinners = getBlockedWinners(winners);
+                renderWinners();
+                // The cooldown may have changed who can be drawn.
+                if (document.getElementById('startDate').value) {
+                    updateEligibleList();
+                }
+            });
+
+            applyYear(currentYear, { rerender: false });
+            renderYearPicker(
+                document.getElementById('yearSelector'),
+                currentYear,
+                (year) => applyYear(year)
+            );
+
             const docRef = doc(db, "bookingData", "main");
-            
+
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
@@ -1284,11 +1981,12 @@
                     
                     buildIncentiveTracker();
                     buildPrizeWheel();
+                    renderWinners();
                 }
             }, (error) => {
                 console.error("Error:", error);
                 document.getElementById('loadingMessage').innerHTML = 
-                    '<p style="color: #F98C74;">Error connecting. Please refresh the page.</p>';
+                    '<p style="color: var(--coral);">Error connecting. Please refresh the page.</p>';
             });
         }
 

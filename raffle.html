@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farillio Raffle Spinner 🎰</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/farillio.css">
     <style>
         * {
             margin: 0;
@@ -12,23 +13,10 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #FF5F3C;
-            --primary-dark: #DA4628;
-            --green: #005852;
-            --green-light: #49796B;
-            --coral: #F98C74;
-            --gold: #FFD700;
-            --purple: #8B5CF6;
-            --pink: #EC4899;
-            --bg: #FBF9F9;
-            --surface: #FFFFFF;
-            --text: #1D1C1C;
-        }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #1D1C1C 0%, #2D2A2E 50%, #1D1C1C 100%);
+            background: var(--stage);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -41,10 +29,11 @@
         }
 
         header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: var(--stage-soft);
             padding: 30px;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(255,95,60,0.4);
+            border-top: 3px solid var(--comet-orange);
+            box-shadow: var(--shadow-lg);
             margin-bottom: 30px;
             text-align: center;
             position: relative;
@@ -65,7 +54,7 @@
             height: 70px;
             border-radius: 15px;
             overflow: hidden;
-            background: white;
+            background: var(--comet-blush);
             padding: 8px;
             margin: 0 auto 15px;
         }
@@ -136,7 +125,7 @@
         select, input[type="date"] {
             width: 100%;
             padding: 15px;
-            border: 3px solid #DFD2CE;
+            border: 3px solid var(--border);
             border-radius: 12px;
             font-size: 1rem;
             font-family: 'Poppins', sans-serif;
@@ -146,13 +135,56 @@
             background: white;
         }
 
+        .year-selector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .year-selector .year-nav {
+            width: 46px;
+            height: 46px;
+            border: 3px solid var(--border, var(--border));
+            background: var(--green, var(--green));
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .year-selector .year-nav:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .year-selector .year-nav:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .year-selector .year-select {
+            width: auto;
+            min-width: 140px;
+            padding: 12px 18px;
+            font-size: 1.3rem;
+            text-align: center;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
         select:focus, input[type="date"]:focus {
             outline: none;
             border-color: var(--primary);
         }
 
         .eligible-list {
-            background: #F5F1F0;
+            background: var(--bg-subtle);
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
@@ -180,7 +212,7 @@
         }
 
         .no-eligible {
-            color: #B72E15;
+            color: var(--comet-orange-deep);
             font-weight: 600;
         }
 
@@ -199,7 +231,7 @@
         }
 
         .wheel-panel {
-            background: linear-gradient(145deg, #2D2A2E, #1D1C1C);
+            background: linear-gradient(145deg, var(--stage-soft), var(--stage));
             border-radius: 25px;
             padding: 25px;
             text-align: center;
@@ -324,7 +356,7 @@
 
         .result-display {
             background: linear-gradient(145deg, var(--green), var(--green-light));
-            color: #FFFFFF;
+            color: var(--white);
             padding: 22px 30px;
             border-radius: 15px;
             font-size: 2rem;
@@ -348,7 +380,7 @@
         }
 
         .final-result {
-            background: linear-gradient(145deg, var(--surface), #F5F1F0);
+            background: linear-gradient(145deg, var(--surface), var(--bg-subtle));
             border-radius: 25px;
             padding: 40px;
             text-align: center;
@@ -476,6 +508,8 @@
             <p class="subtitle">Spin to win! Based on office attendance</p>
         </header>
 
+        <div class="year-selector" id="yearSelector"></div>
+
         <div id="loadingMessage" class="loading-message">
             <div class="loading-spinner"></div>
             <p>Connecting to booking data...</p>
@@ -488,11 +522,11 @@
                 <div class="selector-grid">
                     <div>
                         <label for="startDate">From Date</label>
-                        <input type="date" id="startDate" onchange="onStartDateChange()" value="2026-01-01" min="2026-01-01" max="2026-12-31">
+                        <input type="date" id="startDate" onchange="onStartDateChange()">
                     </div>
                     <div>
                         <label for="endDate">To Date</label>
-                        <input type="date" id="endDate" onchange="onEndDateChange()" value="2026-01-14" min="2026-01-01" max="2026-12-31">
+                        <input type="date" id="endDate" onchange="onEndDateChange()">
                     </div>
                 </div>
                 <div class="eligible-list">
@@ -555,6 +589,13 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import {
+            isBankHoliday,
+            toDateStr,
+            getSelectedYear,
+            renderYearPicker,
+            applyYearToDateInputs
+        } from "./js/calendar-core.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -597,29 +638,22 @@
             { name: "Personalised Mug", emoji: "🎉", category: "Novelty" }
         ];
 
-        // UK Bank Holidays 2026
-        const ukBankHolidays2026 = [
-            '2026-01-01', '2026-04-03', '2026-04-06', '2026-05-04',
-            '2026-05-25', '2026-08-31', '2026-12-25', '2026-12-28'
-        ];
+        // Bank holidays are computed per year — see js/calendar-core.js.
 
         let bookings = {};
+        let currentYear = getSelectedYear();
         let eligibleAttendees = [];
         let selectedWinner = null;
         let selectedPrize = null;
 
         // Wheel colors
+        // Muted complimentary palette. Each clears 4.2:1 against the
+        // white segment labels; the Tailwind rainbow it replaced did not.
         const wheelColors = [
-            '#FF5F3C', '#005852', '#49796B', '#F98C74', '#8B5CF6',
-            '#EC4899', '#F59E0B', '#10B981', '#3B82F6', '#EF4444',
-            '#6366F1', '#14B8A6', '#F97316', '#84CC16', '#A855F7',
-            '#22D3EE', '#FB7185', '#4ADE80', '#FBBF24', '#818CF8',
-            '#2DD4BF', '#FB923C', '#A3E635', '#C084FC'
+            'var(--comet-orange-deep)', 'var(--green)', 'var(--plum)', 'var(--steel-blue)',
+            'var(--brick)', 'var(--moss)', 'var(--heather)', 'var(--cornflower)',
+            'var(--forest)', 'var(--taupe)', 'var(--ink-navy-soft)', 'var(--comet-orange-dark)'
         ];
-
-        function isBankHoliday(dateStr) {
-            return ukBankHolidays2026.includes(dateStr);
-        }
 
         function getEligibleAttendees(startDateStr, endDateStr) {
             const startDate = new Date(startDateStr);
@@ -631,10 +665,7 @@
             let currentDate = new Date(startDate);
             while (currentDate <= endDate) {
                 const dayName = currentDate.toLocaleDateString('en-US', { weekday: 'short' });
-                const year = currentDate.getFullYear();
-                const month = currentDate.getMonth();
-                const day = currentDate.getDate();
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dateStr = toDateStr(currentDate);
                 
                 // Skip weekends and bank holidays
                 if (dayName !== 'Sat' && dayName !== 'Sun' && !isBankHoliday(dateStr)) {
@@ -681,13 +712,10 @@
                 start.setDate(start.getDate() + 13);
 
                 // Keep within the picker's allowed range.
-                const max = new Date('2026-12-31');
+                const max = new Date(currentYear, 11, 31);
                 if (start > max) start.setTime(max.getTime());
 
-                const y = start.getFullYear();
-                const m = String(start.getMonth() + 1).padStart(2, '0');
-                const d = String(start.getDate()).padStart(2, '0');
-                endInput.value = `${y}-${m}-${d}`;
+                endInput.value = toDateStr(start);
             }
 
             updateEligibleList();
@@ -841,7 +869,7 @@
         }
 
         function launchConfetti() {
-            const colors = ['#FF5F3C', '#FFD700', '#005852', '#F98C74', '#8B5CF6', '#EC4899'];
+            const colors = ['var(--primary)', 'var(--coral)', 'var(--camel)', 'var(--teal)', 'var(--rose)', 'var(--comet-blush)'];
             
             for (let i = 0; i < 150; i++) {
                 setTimeout(() => {
@@ -864,7 +892,27 @@
         }
 
         // Initialize
+        // Point the page at a given year.
+        function applyYear(year, { rerender = true } = {}) {
+            currentYear = year;
+
+            applyYearToDateInputs(
+                document.getElementById('startDate'),
+                document.getElementById('endDate'),
+                year
+            );
+
+            if (rerender) updateEligibleList();
+        }
+
         function init() {
+            applyYear(currentYear, { rerender: false });
+            renderYearPicker(
+                document.getElementById('yearSelector'),
+                currentYear,
+                (year) => applyYear(year)
+            );
+
             const docRef = doc(db, "bookingData", "main");
             
             onSnapshot(docRef, (docSnap) => {
@@ -881,7 +929,7 @@
             }, (error) => {
                 console.error("Error:", error);
                 document.getElementById('loadingMessage').innerHTML = 
-                    '<p style="color: #F98C74;">Error connecting. Please refresh the page.</p>';
+                    '<p style="color: var(--coral);">Error connecting. Please refresh the page.</p>';
             });
         }
 

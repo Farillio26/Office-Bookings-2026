@@ -1,0 +1,118 @@
+/* =========================================================
+   Farillio Office Bookings — brand palette.
+
+   Colour values come from the Farillio Design System
+   ("Farillio Design System.zip" -> colors_and_type.css), which is
+   the source of truth. Nothing here invents a colour: if a shade is
+   needed that isn't below, add it to the design system first.
+
+   Poppins is loaded from Google Fonts in each page. Sharp Sans
+   Display, the design system's hero face, is deliberately NOT used:
+   it is a commercial licence and this repository is public, so the
+   font file must not be published here. Poppins carries the headings.
+
+   Pages keep their own layout CSS and refer to colours only through
+   the aliases at the bottom of this file.
+   ========================================================= */
+
+:root {
+    /* ---------- Brand: Comet Orange ---------- */
+    --comet-orange:       #FF5F3C;   /* hero / primary CTA */
+    --comet-orange-mid:   #DA4628;   /* hover, active */
+    --comet-orange-deep:  #B72E15;   /* headings on light, press */
+    --comet-orange-dark:  #931602;   /* deepest accent */
+    --comet-orange-soft:  #F98C74;   /* friendly accent, tags */
+    --comet-orange-pale:  #F3BAAD;   /* subtle backgrounds */
+    --comet-blush:        #FCE3DC;   /* palest tint */
+    --comet-ink:          #4D1A0F;   /* warm near-black — text */
+
+    /* ---------- Neutrals ---------- */
+    --light-grey:         #EDE8E6;   /* page background */
+    --dark-grey:          #DFD2CE;   /* borders, dividers */
+    --white:              #FFFFFF;
+
+    /* ---------- Secondary: depth ---------- */
+    --classic-green:      #005852;
+    --ink-navy:           #1F1838;
+    --ink-navy-deep:      #19132D;
+    --ink-navy-soft:      #352F4C;
+
+    /* ---------- Complimentary: muted, never neon ---------- */
+    --plum:               #602540;
+    --teal:               #008890;
+    --heather:            #5B4063;
+    --slate-blue:         #7984A2;
+    --brick:              #932C2B;
+    --moss:               #49796B;
+    --camel:              #AB8B59;
+    --steel-blue:         #456C85;
+    --forest:             #205754;
+    --rose:               #C98C8C;
+    --cornflower:         #34689F;
+    --taupe:              #736257;
+
+    /* ---------- Semantic ---------- */
+    --bg:                 var(--light-grey);
+    --bg-elevated:        var(--white);
+    --bg-inverse:         var(--ink-navy);
+    --bg-brand-soft:      var(--comet-blush);
+    --bg-subtle:          #F7F3F1;
+
+    --fg1:                var(--comet-ink);   /* primary text   — 11.8:1 on page */
+    --fg2:                #5D4A44;            /* secondary text —  6.8:1 on page */
+    --fg3:                #8A776F;            /* meta, large text only */
+    --fg-on-inverse:      var(--white);
+
+    --border-strong:      #B8A6A0;
+    --border-inverse:     rgba(255, 255, 255, 0.14);
+
+    --success:            var(--moss);
+    --success-bg:         #E4EFEB;
+    --warning:            var(--camel);
+    --warning-bg:         #F5EEE0;
+    --danger:             var(--brick);
+    --danger-bg:          #F6E1E0;
+    --info:               var(--cornflower);
+    --info-bg:            #E1EAF4;
+
+    /* ---------- Warm shadows (never neutral grey) ---------- */
+    --shadow-sm:    0 1px 2px rgba(77, 26, 15, 0.06), 0 1px 1px rgba(77, 26, 15, 0.04);
+    --shadow-md:    0 4px 12px rgba(77, 26, 15, 0.08), 0 1px 3px rgba(77, 26, 15, 0.05);
+    --shadow-lg:    0 16px 40px rgba(77, 26, 15, 0.12), 0 4px 10px rgba(77, 26, 15, 0.06);
+    --shadow-brand: 0 10px 30px rgba(255, 95, 60, 0.28);
+
+    /* =====================================================
+       Aliases — the names the three pages already use.
+       Remapping here recolours every page at once; no page
+       needs to name a hex value of its own.
+       ===================================================== */
+    --primary:       var(--comet-orange);
+    --primary-dark:  var(--comet-orange-mid);
+    --green:         var(--classic-green);
+    --green-light:   var(--moss);
+    --coral:         var(--comet-orange-soft);
+    --brown-dark:    var(--comet-ink);
+
+    --grey:          var(--border-strong);
+    --grey-light:    var(--light-grey);
+    --surface:       var(--white);
+    --text:          var(--comet-ink);
+    --text-light:    var(--fg2);
+    --border:        var(--dark-grey);
+
+    /* Were #FFD700 gold, #8B5CF6 violet and #EC4899 hot pink —
+       replaced by their muted counterparts in the complimentary
+       palette, which is what the design system reserves for
+       accents and category colour. */
+    --gold:          var(--camel);
+    --gold-deep:     #8C6E42;
+    --purple:        var(--heather);
+    --pink:          var(--plum);
+
+    /* Dark "stage" surfaces on the raffle and incentives pages.
+       Were near-black #1D1C1C / #2D2A2E; now the brand's own
+       inky aubergine-navy. */
+    --stage:         var(--ink-navy);
+    --stage-soft:    var(--ink-navy-soft);
+    --stage-deep:    var(--ink-navy-deep);
+}
