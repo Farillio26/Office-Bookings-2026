@@ -20,12 +20,15 @@
             --cal-text:          #4D1A0F;
             --cal-text-muted:    #5D4A44;
             --cal-border:        #DFD2CE;
+            --cal-on-dark:       #FFFFFF;  /* text on forest green and coral fills */
+            --cal-overlay:       rgba(244, 239, 237, 0.92);  /* loading veil, the page colour at 92% */
             --cal-panel-shadow:  0 4px 12px rgba(77, 26, 15, 0.08);
 
             /* Coral — used sparingly */
             --cal-coral:         #FF5F3C;  /* logo tile only */
             --cal-coral-active:  #DA4628;  /* active tab + active month */
             --cal-coral-text:    #B72E15;  /* coral-coloured text */
+            --cal-coral-darkest: #931602;  /* pressed / hover state of coral text and buttons */
             --cal-coral-pale:    #F3BAAD;  /* header bar + table headings */
             --cal-coral-blush:   #FCE3DC;  /* free fixed desk */
 
@@ -35,6 +38,7 @@
             --cal-forest-blush:  #DBE9E5;  /* free floating desk */
             --cal-forest-border: #BCD3CD;
             --cal-forest-ground: #EEF4F2;  /* floating column ground */
+            --cal-forest-hover:  #18433F;  /* hover state of forest-green buttons */
 
             /* Non-working days */
             --cal-bank-holiday:  #E9DFDB;
@@ -206,7 +210,7 @@
 
         .nav-tab.active {
             background: var(--cal-coral-active);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             border-color: var(--cal-coral-active);
         }
 
@@ -266,7 +270,7 @@
             height: 44px;
             border: 1px solid var(--cal-forest);
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             border-radius: 8px;
             cursor: pointer;
             font-size: 1rem;
@@ -319,7 +323,7 @@
 
         .month-btn.active {
             background: var(--cal-coral-active);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             border-color: var(--cal-coral-active);
             box-shadow: var(--cal-panel-shadow);
         }
@@ -348,7 +352,7 @@
 
         button {
             background: var(--cal-coral-active);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             border: none;
             padding: 12px 24px;
             border-radius: 8px;
@@ -378,7 +382,7 @@
         }
 
         .btn-danger:hover {
-            background: #931602;
+            background: var(--cal-coral-darkest);
         }
 
         .user-list {
@@ -427,7 +431,7 @@
         }
 
         .remove-user:hover {
-            color: #931602;
+            color: var(--cal-coral-darkest);
         }
 
         .calendar {
@@ -540,12 +544,12 @@
             border-radius: 8px 0 0 8px;
             font-weight: 600;
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
         }
 
         td:nth-child(2) {
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             font-weight: 700;
         }
 
@@ -620,7 +624,7 @@
 
         .desk-cell select.booked-select {
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             border-color: var(--cal-forest);
         }
 
@@ -633,11 +637,11 @@
         .export-btn {
             margin-top: 20px;
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
         }
 
         .export-btn:hover {
-            background: #18433F;
+            background: var(--cal-forest-hover);
         }
 
         .dashboard-grid {
@@ -739,7 +743,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(244, 239, 237, 0.92);
+            background: var(--cal-overlay);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -790,7 +794,7 @@
 
         .raffle-link:hover {
             background: var(--cal-forest);
-            color: #FFFFFF;
+            color: var(--cal-on-dark);
             transform: translateY(-2px);
             box-shadow: var(--cal-panel-shadow);
         }

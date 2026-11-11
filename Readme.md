@@ -102,33 +102,61 @@ the next time somebody booked a desk.
 Colour comes from the **Farillio Design System** (`Farillio Design System.zip`
 -> `colors_and_type.css`). Every brand, neutral, complimentary and semantic
 token is mirrored in [`css/farillio.css`](css/farillio.css), which all three
-pages link. **No page contains a hard-coded colour** -- change a value there
-and all three follow.
+pages link. That file also keeps aliases for the names the pages already used
+(`--primary`, `--green`, `--gold`, and so on), so the markup did not have to be
+rewritten to pick up the palette.
 
-That file also keeps aliases for the names the pages already used
-(`--primary`, `--green`, `--gold`, and so on), so the markup did not have to
-be rewritten to pick up the palette.
+### Booking calendar (`index.html`)
 
-What changed from the original:
+The calendar has its own, quieter palette: **22 `--cal-*` tokens defined once
+in a block at the top of `index.html`**. Change a value there and the grid,
+header, tabs, month buttons and desk dropdowns all follow. There are **no
+literal colours** anywhere in the calendar's CSS or in the markup it generates.
+Two small things use the shared tokens from `farillio.css` instead: the
+live-sync badge (`--success` / `--warning`) and a few secondary-text notes
+(`--text-light`).
 
-- The hot pink, violet and Tailwind-rainbow wheel colours are gone. Accents
-  now come from the design system's **complimentary palette** -- plum, moss,
-  steel blue, heather, brick, taupe -- which is muted by design.
-- Comet Orange is used as a **spot colour**, not as large fills. The month
-  grid, page headers and table headings are quiet surfaces; orange marks the
-  one thing that is selected.
-- The near-black panels on the incentives and raffle pages are now the
-  brand's own **ink navy** (`#1F1838`).
-- Page backgrounds are the design system's warm **light grey** (`#EDE8E6`),
-  not white, and shadows are warm-tinted rather than neutral grey.
+- Comet Orange is a **spot colour**: the logo tile, plus the one active tab and
+  the one active month (`#DA4628`).
+- Forest green (`#205754`) carries the date and day columns and booked desks.
+  Free desks are blush; floating desks have their own green-tinted set.
+- The page is a warm `#F4EFED`; panels are white with 1px `#DFD2CE` borders and
+  a soft warm shadow. Header bar and table headings are coral-pale `#F3BAAD`.
+- Weekend and bank-holiday rows carry a tint (`#EEE8E5` and `#E9DFDB`); the date
+  and day columns let it show through instead of turning green.
+- The header logo is the coral icon cropped from `farillio_logo.jpg`, with the
+  "farillio" wordmark cropped from the same file below it. The wordmark uses
+  `mix-blend-mode: multiply` so the JPEG's white ground drops out.
+
+### Incentives and raffle pages
+
+These keep the earlier reskin: a dark **ink navy** (`#1F1838`) stage, and wheel
+colours taken from the design system's muted **complimentary palette** (plum,
+moss, steel blue, heather, brick, taupe) in place of the original hot pink,
+violet and rainbow.
+
+They are **not fully tokenised**. Every hex colour comes from `farillio.css`,
+but both pages still contain the keyword `white` and a number of `rgba()`
+shadows and translucent overlays as literals -- about 23 in `incentives.html`
+and 18 in `raffle.html`, a few of them tints of the old palette. Moving them
+into tokens would be a cosmetic clean-up only.
 
 ### Contrast
 
-Every text/background pair on all three pages (and every tab) was measured
-against WCAG AA -- 4.5:1 for body text, 3:1 for large text -- and all pass.
-A few long-standing problems were fixed along the way, including white
-labels on coral "Free" desk dropdowns (2.3:1) and winner names that were
+On `incentives.html` and `raffle.html`, every text/background pair on every tab
+was measured against WCAG AA -- 4.5:1 for body text, 3:1 for large text -- and
+all passed. A few long-standing problems were fixed along the way, including
+white labels on coral "Free" desk dropdowns (2.3:1) and winner names that were
 white on a pale card, so invisible.
+
+On the booking calendar the specified pairs (header, tabs, month buttons,
+table headings, date and day columns, booked and free desks, floating desks,
+weekend and bank-holiday rows, month title) were measured the same way and all
+pass **except one**: white on `#DA4628`, used for the active tab, the active
+month and the buttons, is **4.30:1** against a 4.5:1 threshold. It is kept as
+the specified brand colour; `#D23F20` would clear it (4.52:1). The calendar's
+other tabs (dashboard, department tracking, user management) have not been
+re-audited since the restyle.
 
 When picking a colour, note that **Comet Orange `#FF5F3C` is only 3:1 on
 white**, so it is a fill, not a text colour. Use `--comet-orange-deep`
